@@ -1,0 +1,64 @@
+---
+title: "p8105_hw06_nj2208"
+author: "James Ng"
+date: "11/23/2019"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+
+knitr::opts_chunk$set(
+	echo = TRUE,
+	warning = FALSE,
+	fig.width = 8, 
+  fig.height = 6,
+  out.width = "90%"
+)
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+set.seed(1)
+
+```
+
+## Problem 1
+
+```{r}
+birthweight = read_csv("./data/birthweight.csv")
+```
+
+```{r}
+bw_mod = birthweight %>% 
+  mutate(
+    babysex = case_when(
+      babysex == 1 ~"male",
+      babysex == 2 ~"female"),
+    frace = case_when(
+      frace == 1 ~"white",
+      frace == 2 ~"black",
+      frace == 3 ~"asian",
+      frace == 4 ~"puerto_rican",
+      frace == 8 ~"other",
+      frace == 9 ~"unknown"),
+    mrace = case_when(
+      mrace == 1 ~"white",
+      mrace == 2 ~"black",
+      mrace == 3 ~"asian",
+      mrace == 4 ~"puerto_rican",
+      mrace == 8 ~"other"),
+    malform = case_when(
+      malform == 0 ~"absent",
+      malform == 1 ~"present")
+    )
+```
+
+```{r}
+bw_exp = bw_mod %>% 
+  filter(wtgain == NA)
+```
+
