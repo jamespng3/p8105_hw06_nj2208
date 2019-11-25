@@ -7,6 +7,8 @@ output: github_document
 
 ```{r setup, include=FALSE}
 library(tidyverse)
+library(modelr)
+library(mgcv)
 
 knitr::opts_chunk$set(
 	echo = TRUE,
@@ -58,7 +60,52 @@ bw_mod = birthweight %>%
 ```
 
 ```{r}
-bw_exp = bw_mod %>% 
-  filter(wtgain == NA)
+bw_guess1 = lm (bwt ~ ., data=bw_mod)%>% 
+  broom::tidy()
+
+bw_guess2 = lm (
+  bwt ~ babysex + bhead + blength + delwt +gaweeks + parity + smoken, 
+  data=bw_mod)
+```
+
+```{r}
+guess = bw_mod %>% 
+  modelr::add_residuals(bw_guess2) %>%  
+  modelr::add_predictions(bw_guess2)
+guess %>% 
+ggplot(aes(x=resid,y=pred))+
+  geom_point()
+
+```
+
+I first fitted a linear model using all the possible predictors and then did a shortened version of backward elimination just to get a prelim model to work with.
+
+```{r}
+model_1 = lm(bwt ~ blength + gaweeks, data = bw_mod)
+model_2 = lm(bwt ~ bhead*blength*babysex, data = bw_mod)
+```
+
+```{r}
+
+```
+
+
+
+
+
+## Problem 2
+
+```{r}
+weather_df = 
+  rnoaa::meteo_pull_monitors(
+    c("USW00094728"),
+    var = c("PRCP", "TMIN", "TMAX"), 
+    date_min = "2017-01-01",
+    date_max = "2017-12-31") %>%
+  mutate(
+    name = recode(id, USW00094728 = "CentralPark_NY"),
+    tmin = tmin / 10,
+    tmax = tmax / 10) %>%
+  select(name, id, everything())
 ```
 
